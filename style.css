@@ -47,6 +47,7 @@ header {
   font-weight: 700;
   letter-spacing: 1px;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .logo p {
@@ -485,88 +486,147 @@ footer {
   letter-spacing: 0.05em;
 }
 
-/* ===== MENU MOBILE ===== */
-.menu-hamburguer {
-  display: none; /* Oculta inicialmente no desktop */
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 10px;
-  z-index: 1001;
-  margin-right: auto;
-  order: -1; /* Coloca o ícone primeiro no fluxo flex */
-}
 
-
-.menu-hamburguer .hamburguer-line {
-  display: block;
-  width: 25px;
-  height: 3px;
-  background-color: #1c2e4a;
-  margin: 5px 0;
-  transition: all 0.3s ease;
-}
 
 /* ===== RESPONSIVIDADE ===== */
 @media (max-width: 768px) {
   /* ... (mantenha todos os outros estilos existentes) ... */
   
+ }
+
+
+
+ 
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+   /* ===== MENU MOBILE ===== */
+#mobile-menu-button {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  z-index: 1001;
+   margin-left: auto;
+  margin-right: 54px;
+}
+
+.bar {
+  display: block;
+  width: 25px;
+  height: 3px;
+  margin: 5px auto;
+  background: #1c2e4a;
+  transition: all 0.3s ease;
+}
+
+#mobile-menu {
+  transition: all 0.3s ease;
+}
+
+/* Quando menu está aberto */
+#mobile-menu-button.active .bar:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+#mobile-menu-button.active .bar:nth-child(2) {
+  opacity: 0;
+}
+
+#mobile-menu-button.active .bar:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 1024px) {
+  #mobile-menu-button {
+    display: block;
+  }
+
   .menu-nav {
     position: fixed;
-    top: 60px;
-    left: 0;
-    width: 100%;
-    background-color: #eeecea;
-    z-index: 999;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease-out;
-    text-align: center; /* Centraliza todo o conteúdo */
-    padding: 0; /* Resetamos o padding inicial */
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: #eeecea;
+    z-index: 1000;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+     display: flex;
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+    text-align: center; /* Centraliza o texto */
+    padding-top: 0; /* Remove o padding superior anterior */
   }
-  
+
   .menu-nav.active {
-    max-height: 400px;
-    padding: 20px 0; /* Espaçamento vertical apenas */
+    right: 0;
   }
-  
+
   .menu-lista {
     flex-direction: column;
-    gap: 15px;
-    width: 100%;
-    align-items: center; /* Centraliza os itens horizontalmente */
-    padding: 0; /* Remove qualquer padding extra */
+    padding: 20px;
   }
-  
+
   .menu-lista li {
-    width: auto; /* Largura automática para os itens */
+    margin: 15px 0;
   }
-  
+
   .menu-lista a {
-    display: inline-block; /* Permite centralização */
-    padding: 12px 20px;
-    font-size: 1.1rem;
-    border-bottom: none; /* Remove a borda se preferir */
-    text-align: center; /* Centraliza o texto */
+    font-size: 18px;
+    padding: 10px 0;
+    display: block;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
   }
-  
-  /* Opcional: estilo para destacar os itens */
-  .menu-lista a {
-    background-color: rgba(255,255,255,0.2);
-    border-radius: 6px;
-    transition: all 0.3s ease;
-  }
-  
-  .menu-lista a:hover {
-    background-color: rgba(255,255,255,0.4);
-  }
-}  
-  .menu-hamburguer.active .hamburguer-line:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-  }
-  .menu-hamburguer.active .hamburguer-line:nth-child(2) {
-    opacity: 0;
-  }
-  .menu-hamburguer.active .hamburguer-line:nth-child(3) {
-    transform: rotate(-45deg) translate(5px, -5px);
-  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Efeito de desfoque */
+.blur-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(1px);
+  z-index: 999; /* Um nível abaixo do menu */
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.blur-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Ajuste para garantir que o menu fique acima do blur */
+.menu-nav {
+  z-index: 1000;
+}
