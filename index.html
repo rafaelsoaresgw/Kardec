@@ -8,29 +8,31 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+   <div class="blur-overlay" id="blur-overlay"></div>
   <!-- HEADER (FIXO) -->
-  <header id="header-fixo">
-    <div class="topo-container">
-      <div class="logo">
-        <h1>ALLAN KARDEC</h1>
-        <p>CASA DOS ESPIRITAS</p>
-      </div>
-      <button class="menu-hamburguer" aria-label="Menu">
-        <span class="hamburguer-line"></span>
-        <span class="hamburguer-line"></span>
-        <span class="hamburguer-line"></span>
-      </button>
-      <nav class="menu-nav">
-        <ul class="menu-lista">
-          <li><a href="#inicio">Início</a></li>
-          <li><a href="#sobre">Sobre</a></li>
-          <li><a href="#avaliacao">Avaliações</a></li>
-          <li><a href="#livross">Livros</a></li>
-        </ul>
-      </nav>
+<header id="header-fixo">
+  <div class="topo-container">
+    <div class="logo">
+      <h1>ALLAN KARDEC</h1>
+      <p>CASA DOS ESPIRITAS</p>
     </div>
-  </header>
-
+    
+    <button class="menu-toggle" id="mobile-menu-button">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+    
+    <nav class="menu-nav" id="mobile-menu">
+      <ul class="menu-lista">
+        <li><a href="#inicio">Início</a></li>
+        <li><a href="#sobre">Sobre</a></li>
+        <li><a href="#avaliacao">Avaliações</a></li>
+        <li><a href="#livross">Livros</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
   <!-- SEÇÃO HERO (com ID para âncora) -->
   <section id="inicio" class="hero">
     <div class="texto-hero">
@@ -152,85 +154,95 @@
 
   <!-- SCRIPTS -->
   <script>
+  
+ document.addEventListener('DOMContentLoaded', function() {
   // Menu Mobile
-  document.addEventListener('DOMContentLoaded', function() {
-    // Adiciona índice aos itens do menu para animação sequencial
-    document.querySelectorAll('.menu-lista li').forEach((item, index) => {
-      item.style.setProperty('--i', index);
+  const menuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const blurOverlay = document.getElementById('blur-overlay');
+  
+  if(menuButton && mobileMenu && blurOverlay) {
+    menuButton.addEventListener('click', function() {
+      this.classList.toggle('active');
+      mobileMenu.classList.toggle('active');
+      blurOverlay.classList.toggle('active');
+      document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
     });
-
-    const menuBtn = document.querySelector('.menu-hamburguer');
-    const menuNav = document.querySelector('.menu-nav');
     
-    if (menuBtn && menuNav) {
-      menuBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        this.classList.toggle('active');
-        menuNav.classList.toggle('active');
-        document.body.classList.toggle('menu-open');
-        document.body.classList.toggle('menu-active');
-        document.body.style.overflow = menuNav.classList.contains('active') ? 'hidden' : '';
+    // Fechar menu ao clicar no overlay
+    blurOverlay.addEventListener('click', function() {
+      menuButton.classList.remove('active');
+      mobileMenu.classList.remove('active');
+      this.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+    
+    // Fechar menu ao clicar nos links
+    document.querySelectorAll('.menu-lista a').forEach(link => {
+      link.addEventListener('click', () => {
+        menuButton.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        blurOverlay.classList.remove('active');
+        document.body.style.overflow = '';
       });
-      
-      // Fecha menu ao clicar nos links
-      document.querySelectorAll('.menu-nav a').forEach(link => {
-        link.addEventListener('click', function() {
-          menuBtn.classList.remove('active');
-          menuNav.classList.remove('active');
-          document.body.classList.remove('menu-open', 'menu-active');
-          document.body.style.overflow = '';
-        });
-      });
+    });
+  }
 
-      // Fecha menu ao clicar fora
-      document.addEventListener('click', function(e) {
-        if (!menuNav.contains(e.target) && !menuBtn.contains(e.target) && menuNav.classList.contains('active')) {
-          menuBtn.classList.remove('active');
-          menuNav.classList.remove('active');
-          document.body.classList.remove('menu-open', 'menu-active');
-          document.body.style.overflow = '';
-        }
-      });
-    }
-  });
-
-  // Modal (mantido original)
+  // Modal e Controle de Vídeo
   const modal = document.getElementById("modal");
   const btn = document.querySelector(".botao");
   const closeBtn = document.querySelector(".close-button");
-  const iframe = modal.querySelector("iframe");
-  const videoSrc = iframe.src;
+  const videoIframe = document.querySelector(".video-container iframe");
 
-  btn.addEventListener("click", function(event) {
-    event.preventDefault();
-    modal.style.display = "block";
-  });
+  if(btn && modal) {
+    btn.addEventListener("click", function(e) {
+      e.preventDefault();
+      modal.style.display = "block";
+      
+      // Reinicia o vídeo quando o modal abre
+      if(videoIframe) {
+        const videoSrc = videoIframe.src;
+        videoIframe.src = videoSrc;
+      }
+    });
+  }
 
-  closeBtn.addEventListener("click", function() {
-    modal.style.display = "none";
-    iframe.src = "";
-    iframe.src = videoSrc;
-  });
-
-  window.addEventListener("click", function(event) {
-    if (event.target === modal) {
+  if(closeBtn) {
+    closeBtn.addEventListener("click", function() {
       modal.style.display = "none";
-      iframe.src = "";
-      iframe.src = videoSrc;
-    }
-  });
+      
+      // Pausa o vídeo quando o modal fecha
+      if(videoIframe) {
+        videoIframe.src = videoIframe.src.replace('autoplay=1', 'autoplay=0');
+      }
+    });
+  }
 
-  // Scroll suave para âncoras (mantido original)
+  if(modal) {
+    window.addEventListener("click", function(e) {
+      if (e.target === modal) {
+        modal.style.display = "none";
+        
+        // Pausa o vídeo quando clica fora
+        if(videoIframe) {
+          videoIframe.src = videoIframe.src.replace('autoplay=1', 'autoplay=0');
+        }
+      }
+    });
+  }
+
+  // Scroll suave
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
-      e.preventDefault();
       const targetId = this.getAttribute('href');
-      if (targetId === '#') return;
+      if(targetId === '#') return;
       
+      e.preventDefault();
       const targetElement = document.querySelector(targetId);
-      if (targetElement) {
+      if(targetElement) {
         const headerHeight = document.querySelector('header').offsetHeight;
         const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+        
         window.scrollTo({
           top: targetPosition,
           behavior: 'smooth'
@@ -238,6 +250,7 @@
       }
     });
   });
-</script>
+});
+  </script>
 </body>
 </html>
